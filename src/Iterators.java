@@ -176,7 +176,45 @@ public class Iterators {
         };
     }
 
-    public static Iterable<Integer> test(Iterable<Integer> s1, Iterable<Integer> s2){
+    public static Iterable<Integer> lambda(Iterable<Integer> s, Predicate<Integer> pred){
+
+        return new Iterable<Integer>() {
+            @Override
+            public Iterator<Integer> iterator() {
+                return new Iterator<Integer>() {
+
+                    Integer curr;
+                    Iterator<Integer> it = s.iterator();
+                    @Override
+                    public boolean hasNext() {
+                        if(curr != null)
+                            return true;
+
+                        while(it.hasNext()){
+                            Integer aux =  it.next();
+                            if(pred.test(aux)) {
+                                curr = aux;
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public Integer next() {
+                        if(!hasNext())
+                            throw new NoSuchElementException();
+                        Integer aux = curr;
+                        curr = null;
+                        return aux;
+                    }
+                };
+            }
+        };
+
+    }
+
+    public static Iterable<Integer> sequence(Iterable<Integer> s1, Iterable<Integer> s2){
         return new Iterable<>() {
             @Override
             public Iterator<Integer> iterator() {
@@ -260,16 +298,65 @@ public class Iterators {
         };
     }
 
+    public static Iterable<Integer> duo(Iterable<Integer> s, int duo){
+
+        return new Iterable<Integer>() {
+            @Override
+            public Iterator<Integer> iterator() {
+                return new Iterator<Integer>() {
+
+                    int count = 0;
+                    Integer curr;
+                    Iterator<Integer> it = s.iterator();
+
+                    @Override
+                    public boolean hasNext() {
+                        if(curr != null)
+                            return true;
+
+                        while(it.hasNext()){
+
+                            Integer aux = it.next();
+
+                            if(count++ < duo){
+                                curr = aux;
+                                return true;
+                            }
+
+                            count = 0;
+
+                        }
+
+                        return false;
+                    }
+
+                    @Override
+                    public Integer next() {
+                        if(!hasNext())
+                            throw new NoSuchElementException();
+                        Integer aux = curr;
+                        curr = null;
+                        return aux;
+                    }
+                };
+            }
+        };
+
+    }
+
     public static void main(String[] args) {
         LinkedList<Integer> list = new LinkedList<>();
-
+        LinkedList<Integer> list2 = new LinkedList<>();
         list.add(1);
         list.add(2);
         list.add(5);
         list.add(7);
         list.add(8);
+        list.add(9);
+        list.add(11);
+        list.add(23);
 
-        for ( Integer x : rangeWithStep(list, 2)) {
+        for ( Integer x : duo(list, 2 )) {
             System.out.println(x);
 
         }

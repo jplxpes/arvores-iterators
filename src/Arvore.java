@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class Arvore {
 
@@ -415,15 +413,25 @@ public class Arvore {
         getLeaves(root.right, seq);
     }
 
+    public boolean isValidBST(Node root) {
+
+        if(root == null)
+            return true;
+
+        if((root.right != null && root.right.data <= root.data) || (root.left != null && root.left.data > root.data))
+            return false;
+
+        return isValidBST(root.left) && isValidBST(root.right);
+
+    }
+
     public static void main(String[] args) {
 
-        int a[] = {0,1,4};
-        int b[] = {0,4,1};
+        int a[] = {5, 4, 6, 0, 0, 3, 7};
 
         root = arrayToBst(a, 0 ,  a.length - 1);
-        root2 = arrayToBst(b, 0 ,  a.length - 1);
+        print(root);
 
-        System.out.println(leafSimilar(root, root2));
 
     }
 
