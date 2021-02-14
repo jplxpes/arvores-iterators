@@ -308,19 +308,25 @@ public class Arvore {
         if(root.data == value)
             return true;
 
-        return checkfor(root.left, value) || checkfor(root.right, value);
-
+        return checkfor(root.left, value) || checkfor(root.right, value) ;
 
     }
 
-    public static boolean isEquals(Node root, Integer[] ar){
+    public static boolean isEquals(Node root, int[] ar){
 
-        boolean ret = false;
-
-        for(int i = 0; i < ar.length && !ret; i++){
-            ret = checkfor(root, ar[i]);
+        HashSet<Integer> map = new HashSet<>();
+        for (int i = 0; i < ar.length; i++) {
+            map.add(ar[i]);
         }
-        return ret;
+        return helper(root, map);
+    }
+
+    private static boolean helper(Node root, HashSet<Integer> map) {
+        if(root == null)
+            return true;
+        if(!map.contains(root.data))
+            return false;
+        return helper(root.left, map) && helper(root.right, map);
     }
 
     public static boolean isComplete(Node root){
@@ -425,12 +431,27 @@ public class Arvore {
 
     }
 
+    public static Integer upper(Node root, int k){
+
+        if(root == null)
+            return null;
+
+        Integer aux;
+        if(root.data > k){
+            aux = upper(root.left, k);
+        } else if(root.data < k){
+                aux = upper(root.right, k);
+	    }else{
+            return k;
+        }
+        return (aux == null)? root.data : aux;
+    }
+
     public static void main(String[] args) {
-
-        int a[] = {5, 4, 6, 0, 0, 3, 7};
-
+        int a[] = {1, 2, 5, 7, 9, 11, 20};
         root = arrayToBst(a, 0 ,  a.length - 1);
         print(root);
+
 
 
     }
