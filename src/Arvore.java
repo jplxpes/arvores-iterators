@@ -28,10 +28,11 @@ public class Arvore {
     }
 
     public static void createTree(){
-        root = newNode(1);
-        root.left = newNode(3);
-        root.right = newNode(2);
-        root.left.left = newNode(5);
+        root = newNode(90);
+        root.left = newNode(69);
+        root.left.left = newNode(49);
+        root.left.right = newNode(89);
+        root.left.left.right = newNode(52);
     }
 
     public static void print(Node root) {
@@ -447,13 +448,12 @@ public class Arvore {
         return (aux == null)? root.data : aux;
     }
 
+
+
     public static void main(String[] args) {
-        int a[] = {1, 2, 5, 7, 9, 11, 20};
-        root = arrayToBst(a, 0 ,  a.length - 1);
+        int a[] = {1, 2, 3, 4, 5, 6, 7, 8};
+        root = arrayToBst(a , 0 , a.length -1);
         print(root);
-
-
-
     }
 
 }

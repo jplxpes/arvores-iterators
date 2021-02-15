@@ -1,10 +1,33 @@
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 public class Iterators {
+
+    public static class AscComparator<I extends Number> implements Comparator<Integer> {
+        @Override
+        public int compare(Integer x, Integer y) {
+            if (x < y) {
+                return -1;
+            }
+            if (x > y) {
+                return 1;
+            }
+            return 0;
+        }
+    }
+    public static class DescComparator<I extends Number>  implements Comparator<Integer> {
+        @Override
+        public int compare(Integer x, Integer y) {
+            if (x > y) {
+                return -1;
+            }
+            if (x < y) {
+                return 1;
+            }
+            return 0;
+        }
+    }
 
     public static <E> Iterable<E> skipUntil(Iterable<E> iter, Predicate<E> pred) {
         return new Iterable<>() {
@@ -344,19 +367,94 @@ public class Iterators {
 
     }
 
+    public static Iterable<Integer> reverse(Iterable<Integer> s) {
+        return new Iterable<>() {
+            @Override
+            public Iterator<Integer> iterator() {
+                return new Iterator<>() {
+
+                    Iterator<Integer> it = s.iterator();
+                    Stack<Integer> stack = new Stack<>();
+                    Integer curr;
+
+                    @Override
+                    public boolean hasNext() {
+                        if(curr !=  null)
+                            return true;
+                        while(it.hasNext()){
+                            stack.push(it.next());
+                        }
+                        if(stack.isEmpty())
+                            return false;
+                        curr = stack.pop();
+                        return true;
+                    }
+
+                    @Override
+                    public Integer next() {
+                        if(!hasNext())
+                            throw new NoSuchElementException();
+                        Integer aux = curr;
+                        curr = null;
+                        return aux;
+                    }
+                };
+            }
+        };
+    }
+
+    public static Iterable<Integer> inOrder(Iterable<Integer> s, int x){
+        return new Iterable<Integer>() {
+            @Override
+            public Iterator<Integer> iterator() {
+                Comparator<Integer> cmp = (x%2 == 0)? new AscComparator<Integer>() : new DescComparator<>();
+                return new Iterator<Integer>() {
+
+                    Integer curr;
+                    PriorityQueue<Integer> pqueue = new PriorityQueue<>(cmp);
+                    Iterator<Integer> it = s.iterator();
+
+                    @Override
+                    public boolean hasNext() {
+
+                        if(curr != null)
+                            return true;
+
+                        while(it.hasNext()){
+                            pqueue.add(it.next());
+                        }
+                        if(pqueue.isEmpty())
+                            return false;
+                        curr = pqueue.poll();
+                        return true;
+                    }
+
+                    @Override
+                    public Integer next() {
+                        if(!hasNext())
+                            throw new NoSuchElementException();
+                        Integer aux = curr;
+                        curr = null;
+                        return aux;
+                    }
+                };
+            }
+        };
+
+    }
+
     public static void main(String[] args) {
         LinkedList<Integer> list = new LinkedList<>();
-        LinkedList<Integer> list2 = new LinkedList<>();
         list.add(1);
-        list.add(2);
-        list.add(5);
-        list.add(7);
-        list.add(8);
         list.add(9);
         list.add(11);
         list.add(23);
+        list.add(7);
+        list.add(5);
+        list.add(2);
+        list.add(8);
 
-        for ( Integer x : duo(list, 2 )) {
+        for ( Integer x : inOrder(list, 1)) {
             System.out.println(x);
 
         }
