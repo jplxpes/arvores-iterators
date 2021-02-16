@@ -36,7 +36,7 @@ public class Iterators {
                 return new Iterator<>() {
                     E curr;
                     boolean found = false;
-                    Iterator<E> it = iter.iterator();
+                    final Iterator<E> it = iter.iterator();
 
                     @Override
                     public boolean hasNext() {
@@ -89,7 +89,7 @@ public class Iterators {
 
                     E curr;
                     int count = step;
-                    Iterator<E> it = src.iterator();
+                    final Iterator<E> it = src.iterator();
 
                     public boolean hasNext(){
                         if(curr != null)
@@ -139,8 +139,8 @@ public class Iterators {
             public Iterator<Integer> iterator() {
                 return new Iterator<>() {
                     Integer curr;
-                    Iterator<Integer> it = s1.iterator();
-                    Iterator<Integer> it2 = s2.iterator();
+                    final Iterator<Integer> it = s1.iterator();
+                    final Iterator<Integer> it2 = s2.iterator();
                     Integer a = null;
                     Integer b = null;
 
@@ -207,7 +207,7 @@ public class Iterators {
                 return new Iterator<Integer>() {
 
                     Integer curr;
-                    Iterator<Integer> it = s.iterator();
+                    final Iterator<Integer> it = s.iterator();
                     @Override
                     public boolean hasNext() {
                         if(curr != null)
@@ -330,7 +330,7 @@ public class Iterators {
 
                     int count = 0;
                     Integer curr;
-                    Iterator<Integer> it = s.iterator();
+                    final Iterator<Integer> it = s.iterator();
 
                     @Override
                     public boolean hasNext() {
@@ -373,8 +373,8 @@ public class Iterators {
             public Iterator<Integer> iterator() {
                 return new Iterator<>() {
 
-                    Iterator<Integer> it = s.iterator();
-                    Stack<Integer> stack = new Stack<>();
+                    final Iterator<Integer> it = s.iterator();
+                    final Stack<Integer> stack = new Stack<>();
                     Integer curr;
 
                     @Override
@@ -411,8 +411,8 @@ public class Iterators {
                 return new Iterator<Integer>() {
 
                     Integer curr;
-                    PriorityQueue<Integer> pqueue = new PriorityQueue<>(cmp);
-                    Iterator<Integer> it = s.iterator();
+                    final PriorityQueue<Integer> pqueue = new PriorityQueue<>(cmp);
+                    final Iterator<Integer> it = s.iterator();
 
                     @Override
                     public boolean hasNext() {
@@ -443,20 +443,320 @@ public class Iterators {
 
     }
 
+    public static Iterable<Integer> doUntil(Iterable<Integer> iter, Predicate<Integer> pred){
+
+        return new Iterable<Integer>() {
+            @Override
+            public Iterator<Integer> iterator() {
+                return new Iterator<Integer>() {
+
+                    Integer curr;
+                    boolean done = true;
+                    final Iterator<Integer> it = iter.iterator();
+
+                    @Override
+                    public boolean hasNext() {
+                        if(curr != null)
+                            return true;
+
+                        if(it.hasNext() && done) {
+                            curr = it.next();
+                            if (pred.test(curr)) {
+                                done = false;
+                                return false;
+                            }
+                            return true;
+                        }
+
+                        return false;
+                    }
+
+                    @Override
+                    public Integer next() {
+                        if(!hasNext())
+                            throw new NoSuchElementException();
+                        Integer aux = curr;
+                        curr = null;
+                        return aux;
+                    }
+                };
+            }
+        };
+
+    }
+
+    public static Iterable<Integer> pairValue(Iterable<Integer> s){
+        return new Iterable<Integer>() {
+            @Override
+            public Iterator<Integer> iterator() {
+                return new Iterator<Integer>() {
+
+                    Integer curr;
+                    final Iterator<Integer> it = s.iterator();
+
+                    @Override
+                    public boolean hasNext() {
+                        if(curr != null)
+                            return true;
+                        if(it.hasNext()){
+                            curr = it.next();
+                            while(curr % 2 != 0 && it.hasNext())
+                                curr = it.next();
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public Integer next() {
+                        if(!hasNext())
+                            throw new NoSuchElementException();
+                        Integer aux = curr;
+                        curr = null;
+                        return aux;
+                    }
+                };
+            }
+        };
+
+    }
+
+    public static Iterable<Integer> sum(Iterable<Integer> s){
+        return new Iterable<Integer>() {
+            @Override
+            public Iterator<Integer> iterator() {
+                return new Iterator<Integer>() {
+
+                    Integer curr;
+                    int sum = 0;
+                    final Iterator<Integer> it = s.iterator();
+
+                    @Override
+                    public boolean hasNext() {
+                        if(curr != null)
+                            return true;
+                        if(it.hasNext()){
+                            curr = it.next();
+                            int aux = curr;
+                            curr += sum;
+                            sum += aux;
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public Integer next() {
+                        if(!hasNext())
+                            throw new NoSuchElementException();
+                        Integer aux = curr;
+                        curr = null;
+                        return aux;
+                    }
+                };
+            }
+        };
+
+    }
+
+    public static Iterable<Integer> duoSum(Iterable<Integer> s, Iterable<Integer> s2){
+        return new Iterable<Integer>() {
+            @Override
+            public Iterator<Integer> iterator() {
+                return new Iterator<Integer>() {
+
+                    Integer curr;
+                    final Iterator<Integer> it = s.iterator();
+                    final Iterator<Integer> it2 = s2.iterator();
+
+                    @Override
+                    public boolean hasNext() {
+
+                        if (curr != null)
+                            return true;
+
+                        if (it.hasNext() && it2.hasNext()) {
+                            curr = it.next() + it2.next();
+                            return true;
+                        }
+                        if (!it2.hasNext() && it.hasNext()) {
+                            curr = it.next();
+                            return true;
+                        }
+                        if(it2.hasNext()) {
+                            curr = it2.next();
+                            return true;
+                        }
+                        return false;
+
+
+                    }
+
+                    @Override
+                    public Integer next() {
+                        if(!hasNext())
+                            throw new NoSuchElementException();
+                        Integer aux = curr;
+                        curr = null;
+                        return aux;
+                    }
+                };
+            }
+        };
+
+    }
+
+    public static Iterable<Integer> diff(Iterable<Integer> s, Iterable<Integer> s2){
+        return new Iterable<Integer>() {
+            @Override
+            public Iterator<Integer> iterator() {
+                return new Iterator<Integer>() {
+
+                    Integer curr;
+                    final Iterator<Integer> it = s.iterator();
+                    final Iterator<Integer> it2 = s2.iterator();
+                    Integer aux;
+                    Integer aux2;
+
+                    @Override
+                    public boolean hasNext() {
+                        if (curr != null)
+                            return true;
+
+                        if(!it.hasNext() && !it2.hasNext())
+                            return false;
+
+                        if (it.hasNext() && aux == null)
+                            aux = it.next();
+
+                        if (it2.hasNext() && aux2 == null)
+                            aux2 = it2.next();
+
+                        while (aux.equals(aux2) && (it.hasNext() || it2.hasNext())) {
+                            /*
+                            PARA FAZER COM QUE FAÇAM A UNIAO (also comentar segunda condiçao do while)
+                            curr = aux;
+                            aux = null;
+                            aux2 = null;
+                            return true;
+
+                             */
+
+                            if(it.hasNext() && it2.hasNext()) {
+
+                                aux = it.next();
+                                aux2 = it2.next();
+
+                            } else if(it.hasNext()){
+                                aux = it.next();
+                                aux2 = Integer.MAX_VALUE;
+                            } else {
+                                aux2 = it2.next();
+                                aux = Integer.MAX_VALUE;
+                            }
+
+
+                        }
+
+                        if (aux < aux2) {
+                            curr = aux;
+                            aux = null;
+                            return true;
+                        } else if(aux2 < aux){
+                            curr = aux2;
+                            aux2 = null;
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public Integer next() {
+                        if(!hasNext())
+                            throw new NoSuchElementException();
+                        Integer aux = curr;
+                        curr = null;
+                        return aux;
+                    }
+
+                };
+            }
+        };
+    }
+
+    public static Iterable<Integer> duoSumPos(Iterable<Integer> s, Iterable<Integer> s2){
+        return () -> new Iterator<Integer>() {
+
+            Integer curr;
+            final Iterator<Integer> it = s.iterator();
+            final Iterator<Integer> it2 = s2.iterator();
+            Integer aux;
+            Integer aux2;
+
+            @Override
+            public boolean hasNext() {
+                if (curr != null)
+                    return true;
+
+                if(!it.hasNext() && !it2.hasNext())
+                    return false;
+
+                if (it.hasNext() && aux == null)
+                    aux = it.next();
+
+                if (it2.hasNext() && aux2 == null)
+                    aux2 = it2.next();
+
+                if(aux.equals(aux2)) {
+                        curr = aux + aux2;
+                        if(it.hasNext()) {
+                            aux = it.next();
+                        }
+                        if(it2.hasNext())
+                            aux2 = it2.next();
+
+                        return true;
+                }
+
+                if (aux < aux2) {
+                    curr = aux;
+                    aux = null;
+                    return true;
+                } else {
+                    curr = aux2;
+                    aux2 = null;
+                    return true;
+                }
+            }
+
+            @Override
+            public Integer next() {
+                if(!hasNext())
+                    throw new NoSuchElementException();
+                Integer aux = curr;
+                curr = null;
+                return aux;
+            }
+        };
+
+    }
+
     public static void main(String[] args) {
         LinkedList<Integer> list = new LinkedList<>();
-        list.add(1);
-        list.add(9);
-        list.add(11);
-        list.add(23);
-        list.add(7);
-        list.add(5);
         list.add(2);
+        list.add(5);
+        list.add(6);
+        list.add(7);
         list.add(8);
+        list.add(10);
+        list.add(15);
+        LinkedList<Integer> list2 = new LinkedList<>();
+        list2.add(2);
+        list2.add(5);
+        list2.add(15);
 
-        for ( Integer x : inOrder(list, 1)) {
+         for(Integer x : duoSumPos(list, list2)) {
             System.out.println(x);
-
         }
     }
 

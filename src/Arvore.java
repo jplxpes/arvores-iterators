@@ -3,7 +3,6 @@ import java.util.*;
 public class Arvore {
 
     static Node root;
-    static Node root2;
 
     static class Node {
 
@@ -449,11 +448,47 @@ public class Arvore {
     }
 
 
+    /*****************************************************************/
+
+    public static Node sortedListToBST(ListNode head) {
+        if(head == null)
+            return null;
+        return createTree(getMid(head), head);
+    }
+
+    private static int getMid(ListNode head){
+        int count = 0;
+        while(head != null){
+            head = head.next;
+            count++;
+        }
+        return count/2;
+    }
+
+    public static Node createTree(int mid, ListNode head){
+        if(head == null || mid == 0)
+            return null;
+        ListNode aux = head;
+        for(int i = 0; i < mid && aux != null; aux = aux.next, i++);
+        Node root = new Node(aux.val);
+        root.left = createTree(mid/2, head);
+        root.right = createTree(mid/2, head);
+        return root;
+    }
 
     public static void main(String[] args) {
-        int a[] = {1, 2, 3, 4, 5, 6, 7, 8};
-        root = arrayToBst(a , 0 , a.length -1);
+        ListNode head = new ListNode(1);
+        head.next = new ListNode(3);
+        head.next.next = new ListNode(5);
+        root = sortedListToBST(head);
         print(root);
     }
 
+    private static class ListNode {
+        int val;
+        ListNode next;
+        public ListNode(int val){
+            this.val = val;
+        }
+    }
 }
