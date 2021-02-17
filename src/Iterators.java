@@ -79,59 +79,6 @@ public class Iterators {
         };
     }
 
-    public static <E> Iterable<E> rangeWithStep(Iterable<E> src, int step){
-
-        return new Iterable<E>(){
-
-            @Override
-            public Iterator<E> iterator(){
-                return new Iterator<E>(){
-
-                    E curr;
-                    int count = step;
-                    final Iterator<E> it = src.iterator();
-
-                    public boolean hasNext(){
-                        if(curr != null)
-                            return true;
-
-                        if(it.hasNext()) {
-
-                            if (count == step) {
-                                curr = it.next();
-                                count = 1;
-                                return true;
-                            }
-
-                            it.next();
-                            count++;
-                            return true;
-
-                        }
-
-                        return false;
-
-                    }
-
-                    public E next(){
-                        if(!hasNext())
-                            throw new NoSuchElementException();
-
-                        E aux = curr;
-                        curr = null;
-                        return aux;
-                    }
-
-
-                };
-
-
-            }
-
-        };
-
-    }
-
     public static Iterable<Integer> intersection(Iterable<Integer> s1, Iterable<Integer> s2) {
 
         return new Iterable<>() {
@@ -214,9 +161,8 @@ public class Iterators {
                             return true;
 
                         while(it.hasNext()){
-                            Integer aux =  it.next();
-                            if(pred.test(aux)) {
-                                curr = aux;
+                            curr =  it.next();
+                            if(pred.test(curr)) {
                                 return true;
                             }
                         }
@@ -741,6 +687,45 @@ public class Iterators {
 
     }
 
+    public static <E> Iterable<E> rangeWithStep(Iterable<E> src, int step){
+        return new Iterable<E>() {
+            @Override
+            public Iterator<E> iterator() {
+                return new Iterator<E>() {
+
+                    E curr;
+                    Iterator<E> it = src.iterator();
+                    int count = step;
+
+                    @Override
+                    public boolean hasNext() {
+                        if(curr != null)
+                            return true;
+                        while(it.hasNext()){
+                            curr = it.next();
+                            if(count++ == step){
+                                count = 1;
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    }
+
+                    @Override
+                    public E next() {
+                            if(!hasNext())
+                                throw new NoSuchElementException();
+                            E aux = curr;
+                            curr = null;
+                            return aux;
+                    }
+
+                };
+            }
+        };
+    }
+
     public static void main(String[] args) {
         LinkedList<Integer> list = new LinkedList<>();
         list.add(2);
@@ -755,7 +740,7 @@ public class Iterators {
         list2.add(5);
         list2.add(15);
 
-         for(Integer x : duoSumPos(list, list2)) {
+         for(Integer x : duoSum(list,list2)) {
             System.out.println(x);
         }
     }
