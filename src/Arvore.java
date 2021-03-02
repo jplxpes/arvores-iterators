@@ -27,11 +27,13 @@ public class Arvore {
     }
 
     public static void createTree(){
-        root = newNode(90);
-        root.left = newNode(69);
-        root.left.left = newNode(49);
-        root.left.right = newNode(89);
-        root.left.left.right = newNode(52);
+        root = newNode(9);
+        root.left = newNode(6);
+        root.left.left = newNode(3);
+        root.right = newNode(11);
+        root.right.right = newNode(15);
+        root.right.left = newNode(10);
+
     }
 
     public static void print(Node root) {
@@ -447,10 +449,26 @@ public class Arvore {
         return (aux == null)? root.data : aux;
     }
 
+    public static boolean existClosedNodes(Node root){
+        return existClosedNodesAux(root.left,Integer.MIN_VALUE, root.data) || existClosedNodesAux(root.right,root.data, Integer.MAX_VALUE);
+    }
+
+    public static boolean existClosedNodesAux(Node root, int min, int max) {
+        if(root == null)
+            return false;
+        int l = root.data - min;
+        int r = max - root.data;
+
+        if(root.left == null && root.right == null && l == 1 && r == 1)
+            return true;
+
+        return existClosedNodesAux(root.left,min, root.data) || existClosedNodesAux(root.right,root.data, max);
+    }
 
     public static void main(String[] args) {
         createTree();
         print(root);
+        System.out.println(existClosedNodes(root));
     }
 
 
